@@ -1,0 +1,81 @@
+package com.ramseyProductions.Pinochle;
+
+
+import java.io.IOException;
+import java.io.InputStream;
+
+import com.ramseyProductions.Pinochle.R;
+import com.ramseyProductions.Pinochle.dto.GifMovieView;
+import com.ramseyProductions.Pinochle.properties.CommonFunctions;
+
+import android.app.Activity;
+import android.content.Intent;
+
+import android.os.Bundle;
+import android.os.Handler;
+import android.widget.RelativeLayout;
+
+
+
+public class SplashScreen extends Activity {
+	
+	private Handler mHandler = new Handler();
+	CommonFunctions commonFuncs = new CommonFunctions();
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		setContentView(R.layout.splash_screen);
+		gifThenMain();
+	}
+
+	private void gifThenMain(){
+    	//playGif("loading.gif");
+		playGif(readFromStringXML(R.string.loading_gif));
+    	pause(5000);
+    	return;
+    }
+    
+    private void pause(int pauseTime){
+		//Log.d("DECK", "Start Pause Time " + getCurrentTime());
+		mHandler.postDelayed(new Runnable() {
+            public void run() {
+            	startMain();
+            }
+        }, pauseTime);
+		//Log.d("DECK", "End Pause Time " + getCurrentTime());
+	}
+    private void playGif(String imageName){
+   	 InputStream stream = null;
+        try {
+            stream = getAssets().open(imageName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        RelativeLayout layout = new RelativeLayout(this);
+        GifMovieView view = new GifMovieView(this, stream);
+        //Figure out magic #s.
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(view.getmMovie().width(),view.getmMovie().height());
+        //params.addRule(RelativeLayout.CENTER_IN_PARENT);
+        params.addRule(RelativeLayout.CENTER_VERTICAL);
+        params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        layout.addView(view,params);
+        
+       
+       
+//        GifDecoderView view = new GifDecoderView(this, stream);
+       // GifWebView view = new GifWebView(this, "file:///android_asset/piggy.gif");   
+      
+       setContentView(layout);
+        //setContentView(view);
+   }
+    private void startMain(){
+    	Intent intent = new Intent(this, MainActivity.class);
+    	startActivity(intent);
+    }
+    
+    public String readFromStringXML(int id){
+ 		return  getResources().getString(id);
+ 	}
+}

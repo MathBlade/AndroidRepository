@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+
+    <LinearLayout
+         android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    
+        >
+    
+		<RelativeLayout 
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content" >
+		    <GridLayout
+		        android:layout_width="match_parent"
+		    android:layout_height="wrap_content" 
+		    android:columnCount="1"
+		        >
+		    <TextView
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:textStyle="bold"
+		        android:id="@+id/setting_name_textfield"
+		        android:layout_gravity="center_vertical"
+		        android:textColor="@color/white"
+		         />
+		    <TextView
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text=""
+		        android:textStyle="italic"
+		        android:id="@+id/setting_name_descfield"
+		        android:textColor="@color/white"
+		         />
+	    	<RadioGroup
+	    	    android:orientation="horizontal"
+	    	    android:id="@+id/yes_no_radio_button_group"
+	    	    android:textColor="@color/white"
+	    	     >
+	    	    <RadioButton 
+	    	        android:id="@+id/yes_button"
+	    	        android:textColor="@color/white"
+	    	        android:text="@string/yes"/>
+	    	    <RadioButton 
+	    	        android:id="@+id/no_button"
+	    	        android:textColor="@color/white"
+	    	        android:text="@string/no"/>
+	    	</RadioGroup>
+			</GridLayout>
+		</RelativeLayout>
+	</LinearLayout>
+</merge>

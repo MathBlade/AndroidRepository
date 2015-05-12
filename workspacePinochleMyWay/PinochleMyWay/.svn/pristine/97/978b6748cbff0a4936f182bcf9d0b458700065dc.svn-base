@@ -1,0 +1,86 @@
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+   
+     android:background="@drawable/timber_hard_light"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+     android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+     android:id="@+id/settingsHeader"
+     android:columnCount="1"
+    tools:context=".Settings" >
+
+    
+   
+        <LinearLayout
+         android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:orientation="horizontal"
+        >
+            
+           
+	    	<RelativeLayout 
+            android:id="@+id/settingsToScroll"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+           android:background="@color/black"
+            >
+            
+	    	    <Button
+	    	        android:id="@+id/ignore_changes"
+	    	        style="@attr/buttonBarButtonStyle"
+	    	        android:layout_width="wrap_content"
+	    	        android:layout_height="wrap_content"
+	    	        android:background="@color/black"
+	    	        android:onClick="ignoreChanges"
+	    	        android:text="@string/disregard_changes"
+	    	        android:textColor="@color/white" />
+
+	    	    <Button
+	    	        android:id="@+id/restore_defaults"
+	    	        style="@attr/buttonBarButtonStyle"
+	    	        android:layout_width="wrap_content"
+	    	        android:layout_height="wrap_content"
+	    	        android:layout_centerHorizontal="true"
+	    	        android:background="@color/black"
+	    	        android:onClick="restoreDefaults"
+	    	        android:text="@string/restore_defaults"
+	    	        android:textColor="@color/white" />
+
+		    	<Button
+		    	    android:id="@+id/save_changes"
+		    	    style="@attr/buttonBarStyle"
+		    	    android:layout_width="wrap_content"
+		    	    android:layout_height="wrap_content"
+		    	    android:layout_alignParentRight="true"
+		    	    android:background="@color/black"
+		    	    android:onClick="saveChanges"
+		    	    android:text="@string/save_changes"
+		    	    android:textColor="@color/white" />
+	            
+	    	</RelativeLayout>
+	    	
+     </LinearLayout>
+     <TextView 
+         android:layout_width="wrap_content"
+		 android:layout_height="wrap_content"
+		 android:text="@string/changes_take_effect"
+		 android:textColor="@color/white"
+		 />
+        
+        
+	<ScrollView
+	    	     android:layout_width="match_parent"
+		    	android:layout_height="wrap_content"
+		    	android:id="@+id/settingScrollView"
+		    	 
+		    	 
+	    	    >
+	    	    
+	    	        
+	    	        
+	    	   
+	    	    
+	    	</ScrollView>
+</GridLayout>

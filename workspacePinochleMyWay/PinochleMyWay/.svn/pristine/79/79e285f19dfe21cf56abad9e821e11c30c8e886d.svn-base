@@ -1,0 +1,55 @@
+package com.ramseyProductions.Pinochle.dto;
+
+import java.util.List;
+
+public class Setting {
+
+	String name;
+	String description;
+	List<String> values;
+	String type;
+	List<String> possibleValues;
+	
+	
+	public Setting(String nameOfSetting, String description, List<String> settingValues, String type, List<String> possibleValues) {
+		
+		super();
+		this.name = nameOfSetting;
+		this.description = description;
+		this.values = settingValues;
+		this.type = type;
+		this.possibleValues = possibleValues;
+		
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public List<String> getValues() {
+		return values;
+	}
+	public void setValues(List<String> values) {
+		this.values = values;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
+	public List<String> getPossibleValues() {
+		return possibleValues;
+	}
+	public void setPossibleValues(List<String> possibleValues) {
+		this.possibleValues = possibleValues;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
+}

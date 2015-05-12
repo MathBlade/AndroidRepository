@@ -1,0 +1,123 @@
+package com.pi_r_squared.Pinochle;
+
+import com.pi_r_squared.Pinochle.R;
+
+import android.os.Bundle;
+import android.app.Activity;
+import android.content.Intent;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+
+
+
+public class MainActivity extends Activity {
+
+	public final static String EXTRA_MESSAGE = "com.pi_r_squared.Pinochle.MESSAGE";
+	
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        
+        
+        
+        /*int screenSize = getResources().getConfiguration().screenLayout &
+                Configuration.SCREENLAYOUT_SIZE_MASK;
+
+        switch(screenSize) {
+            case Configuration.SCREENLAYOUT_SIZE_LARGE:
+                Toast.makeText(this, "Large screen",Toast.LENGTH_LONG).show();
+                break;
+            case Configuration.SCREENLAYOUT_SIZE_NORMAL:
+                Toast.makeText(this, "Normal screen",Toast.LENGTH_LONG).show();
+                break;
+            case Configuration.SCREENLAYOUT_SIZE_SMALL:
+                Toast.makeText(this, "Small screen",Toast.LENGTH_LONG).show();
+                break;
+            default:
+                Toast.makeText(this, "Screen size is neither large, normal or small" , Toast.LENGTH_LONG).show();
+        }*/
+   
+       
+        setContentView(R.layout.activity_main);
+        
+        
+    }
+
+    @Override
+	public void onBackPressed()
+	{
+
+	   // super.onBackPressed(); // Comment this super call to avoid calling finish()
+	}
+    
+    
+    
+   
+    
+   /* 
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+    
+    
+        
+    public void startNewGameBtnClick(View view){
+    	createNewGame();
+    }
+    public void rulesBtnClick(View view){
+    	showRules();
+    	//Log.d("DECK", "rules button clicked");
+    }
+    
+
+
+	public void settingsBtnClick(View view){
+    	openSettings();
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+        	case R.id.action_rules:
+	            showRules();
+	            return true;
+        	case R.id.action_settings:
+                openSettings();
+                return true;
+            case R.id.action_new_game:
+                createNewGame();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+    
+    public void showRules() {
+		// Load Rules Page
+    	Intent intent = new Intent(this, RulesActivity.class);
+    	startActivity(intent);
+	}
+    public void openSettings(){
+    	
+    	 // Load settings page
+    	Intent intent = new Intent(this, Settings.class);
+    	startActivity(intent);
+    	
+    }
+    public void createNewGame(){
+    	
+   	 // Load new game
+   	Intent intent = new Intent(this, PinochleGame.class);
+   	startActivity(intent);
+   	
+   }
+    
+    
+    
+}

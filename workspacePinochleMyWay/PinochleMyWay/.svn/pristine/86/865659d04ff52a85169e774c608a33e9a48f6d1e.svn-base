@@ -1,0 +1,242 @@
+package com.pi_r_squared.Pinochle.properties;
+
+/*import static com.pi_r_squared.Pinochle.properties.UsefulConstants.clubs;
+import static com.pi_r_squared.Pinochle.properties.UsefulConstants.clubsInt;
+import static com.pi_r_squared.Pinochle.properties.UsefulConstants.diamonds;
+import static com.pi_r_squared.Pinochle.properties.UsefulConstants.diamondsInt;
+import static com.pi_r_squared.Pinochle.properties.UsefulConstants.hearts;
+import static com.pi_r_squared.Pinochle.properties.UsefulConstants.heartsInt;
+import static com.pi_r_squared.Pinochle.properties.UsefulConstants.spades;
+import static com.pi_r_squared.Pinochle.properties.UsefulConstants.spadesInt;*/
+import static com.pi_r_squared.Pinochle.properties.UsefulConstants.*;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+import org.xmlpull.v1.XmlPullParserException;
+
+import android.content.res.AssetManager;
+import android.util.Log;
+
+import com.pi_r_squared.Pinochle.PinochleApplication;
+import com.pi_r_squared.Pinochle.dto.Card;
+import com.pi_r_squared.Pinochle.dto.CustomXMLParser;
+import com.pi_r_squared.Pinochle.dto.Setting;
+
+public class CommonFunctions {
+
+	
+	public void doRestoreDefaultsWork() throws IOException {
+		
+		
+		//File currentPropFile = commonFuncs.getExternalFile("pinochle_setting.xml");
+		File currentPropFile = commonFuncs.getExternalFile(settingsXML);
+		InputStream defaultPropFile = PinochleApplication.getAppContext().getAssets().open("default_setting.xml");
+		//Filewriter fw = new FileWriter(,true);
+		
+		copyFile(defaultPropFile, currentPropFile);
+		
+		
+	}
+	public Boolean ifFileExists(String filename){
+		File file = new File(PinochleApplication.getAppContext().getExternalFilesDir(null), filename);
+		return file.exists();
+	}
+	
+	public File getExternalFile(String filename) throws IOException{
+		File file = new File(PinochleApplication.getAppContext().getExternalFilesDir(null), filename);
+	    if (!file.exists()) {
+	    	 file.createNewFile();
+	    }
+	    return file;
+	   
+ 
+	}
+	
+	private void copyFile(InputStream asset, File external) throws IOException {
+	    copyAssetToExternal(asset,external);
+	    
+        
+	}
+	// Modified from http://stackoverflow.com/questions/4447477/android-how-to-copy-files-in-assets-to-sdcard
+	private void copyAssetToExternal(InputStream asset, File external) throws IOException{
+		OutputStream out = new FileOutputStream(external);
+		byte[] buffer = new byte[1024];
+	    int read;
+	    while((read = asset.read(buffer)) != -1){
+	      out.write(buffer, 0, read);
+	    }
+	    asset.close();
+        asset = null;
+	    out.flush();
+        out.close();
+        out = null;
+	}
+
+	public Setting readXMLForASetting(String xmlFileName, String settingName) throws XmlPullParserException, IOException{
+		Log.d("DECK", "Blah");
+		AssetManager assetManager = PinochleApplication.getAppContext().getAssets();
+		InputStream instream;
+		if (xmlFileName.equals(defaultXML)){
+			instream = assetManager.open(xmlFileName);
+		}
+		else {
+			instream = new FileInputStream(getExternalFile(xmlFileName));
+		}
+		Log.d("DECK", "File Opened");
+    	return extractASetting(new CustomXMLParser().parse(instream), settingName);
+    }
+	
+	public List<Setting> readAllPrimarySettings(){
+		
+		List<Setting> settingsToReturn = new ArrayList<Setting>();
+		try {
+			settingsToReturn = readAllSettings(settingsXML);
+		}
+		catch(Exception e) {
+			try{
+				settingsToReturn =  readAllSettings(defaultXML);
+			}
+			catch(Exception e2){
+				//do nothing here.
+			}
+		}
+		//Incase the setting file hasn't been initialized.
+		if (settingsToReturn.size() > 0){
+			return settingsToReturn;
+		}
+		else {
+			try {
+				return readAllSettings(defaultXML);
+			} catch (XmlPullParserException e) {
+	
+				return null;
+			} catch (IOException e) {
+		
+				return null;
+			}
+		}
+	}
+	
+	
+	public List<Setting> readAllSettings(String xmlFileName) throws XmlPullParserException, IOException{
+		AssetManager assetManager = PinochleApplication.getAppContext().getAssets();
+		InputStream instream;
+		if (xmlFileName.equals(defaultXML)){
+			instream = assetManager.open(xmlFileName);
+		}
+		else {
+			instream = new FileInputStream(getExternalFile(xmlFileName));
+		}
+		return new CustomXMLParser().parse(instream);
+	}
+    
+	public Setting readFromPrimarySettings(String settingName, String xmlFileName) throws XmlPullParserException, IOException{
+		Log.d("DECK", "howdy yay");
+		try{
+		 return readFromSettings(settingName,xmlFileName);
+		}
+		catch (Exception e){
+			Log.d("DECK", e.getClass() + ": " + e.getMessage());
+		 return readFromSettings(settingName, defaultXML);
+		}
+		
+	
+	}
+	
+	public Setting readFromSettings(
+			String settingName, String xmlFileName) throws XmlPullParserException, IOException {
+
+		Setting thisSetting = readXMLForASetting(xmlFileName, settingName);
+		return thisSetting;
+	}
+	
+	
+	
+	
+	
+	
+	
+    public Setting extractASetting(List<Setting> settingList, String settingName){
+    	
+    	Setting settingToReturn = null;
+    	for (Setting setting: settingList){
+    		Log.d("MTITUS", "GN:" + setting.getName() + " " + settingName);
+    		if ((setting.getName()).equals(settingName)){
+    			settingToReturn= setting;
+    			break;
+    		}
+    	}
+    	
+    		return settingToReturn;
+    	
+    }
+	
+	
+	public Comparator<Card> cardSorter =new Comparator<Card>() {
+
+	   
+	    public int compare(Card c1, Card c2) {
+	        // write comparison logic here like below , it's just a sample
+	        //return o1.getID().compareTo(o2.getID());
+	    	
+	    	if ((-1*(c1.getCardSuit()-c2.getCardSuit())) == 0){
+	    		return (-1*(c1.getRankOfCard()-c2.getRankOfCard()));
+	    	}else {
+	    		return (-1*(c1.getCardSuit()-c2.getCardSuit()));
+	    	}
+	    }
+
+	};
+
+	public String getCurrentTime(){
+		return new SimpleDateFormat(timeFormat, Locale.US).format(new Date());
+	}
+
+	public String getSuitString(int cardSuit){
+		
+		switch (cardSuit) {
+        case clubsInt:
+           return clubs;
+        case diamondsInt:
+           return diamonds;
+        case heartsInt:
+            return hearts;
+        case spadesInt:
+            return spades;
+        default:
+            return null;
+		}
+		
+	}
+	
+	public int getSuitInt(String suitString){
+		if (suitString.equals(spades)){
+			return spadesInt;
+		}
+		else if (suitString.equals(hearts)){
+			return heartsInt;
+		}
+		else if (suitString.equals(diamonds)){
+			return diamondsInt;
+		}
+		else if (suitString.equals(clubs)){
+			return clubsInt;
+		}
+		
+		return 0;
+	}
+	
+	
+	
+}

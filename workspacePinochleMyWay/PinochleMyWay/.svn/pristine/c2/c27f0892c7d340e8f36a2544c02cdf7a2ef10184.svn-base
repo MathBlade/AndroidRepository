@@ -1,0 +1,329 @@
+package com.ramseyProductions.Pinochle.properties;
+
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import com.ramseyProductions.Pinochle.R;
+import com.ramseyProductions.Pinochle.PinochleApplication;
+import com.ramseyProductions.Pinochle.dto.Setting;
+import com.ramseyProductions.Pinochle.properties.CommonFunctions;
+
+
+public class UsefulConstants {
+	
+	public static CommonFunctions commonFuncs = new CommonFunctions();
+	
+		
+	//Techy constants
+	public final static String drawableSlash = readStringFromXMLFileWithoutContext(R.string.drawable_slash); //Required because Card uses this and has no context.
+	public final static String underscore="_"; //No need to universalize this string as it is just an underscore. Programmatic only. Used in Card.
+	public final static String timeFormat=readStringFromXMLFileWithoutContext(R.string.time_format);
+	public final static String supportEmail="ramseyProductions@hotmail.com"; //This must be a stringed constant per ACRA set up. Will need to look at examining how to work around this later.
+	//public final static String settingsXML="pinochle_setting.xml";//This needs to not be externalized because techy and never translated.
+	public final static String settingsXML="pinochle_setting.xml";//This needs to not be externalized because techy and never translated.
+	public final static String defaultXML="default_setting.xml";
+	public final static String yes = readStringFromXMLFileWithoutContext(R.string.yes);
+	public final static String no = readStringFromXMLFileWithoutContext(R.string.no);
+	
+	//THESE CONSTANTS WILL NEED THE ABILITY TO CHANGE BASED ON SETTINGS AT START.
+	//Victory Conditions
+	//public final static int winningScore = 150;
+	
+	@SuppressWarnings("unused")
+	private static Boolean ifFileDNEMakeDefaults = ifFileDNEMakeDefaults();
+	public List<Setting> settingsList = commonFuncs.readAllPrimarySettings();
+	public static List<Setting> defaultSettings = getDefaults();
+	public Boolean validateSettingsList = validateSettingsList();
+	private static String[] validTranslationsNumbers = {"Zero", "One", "Two", "Three", "Four"};
+	private static Integer[] integersOfTranslations = {0,1,2,3,4};
+	private static List<Integer> arrayListOfIntegersForTranslations = Arrays.asList(integersOfTranslations);
+	private static List<String> stringTranslations = getIntegersInUserLanguage();
+	
+
+	//Bid Constants
+	//public final static int minBid = 25;
+	public final int minBid = getIntegerListFromSetting(commonFuncs.extractASetting(settingsList,"minimum_bid"), Boolean.FALSE).get(0);;
+	
+	
+	//public final static int winningScore = getIntegerListFromSetting(readFromPrimarySettings("game_ending_score")).get(0);
+	public int winningScore = getIntegerListFromSetting(commonFuncs.extractASetting(settingsList,"game_ending_score"), Boolean.FALSE).get(0);
+	public Boolean mercyRuleInEffect = getBooleanListFromSetting(commonFuncs.extractASetting(settingsList, "mercy_rule_in_effect"), Boolean.FALSE).get(0);
+	public Boolean shootTheMoonIsAvailable = getBooleanListFromSetting(commonFuncs.extractASetting(settingsList, "shoot_the_moon_question"), Boolean.FALSE).get(0);
+	public Boolean biddingTeamCrossing150AlwaysWins=getBooleanListFromSetting(commonFuncs.extractASetting(settingsList, "winner_if_both_over"), Boolean.FALSE).get(0);
+	public int minimumPointersToTakeMeld = getIntegerListFromSetting(commonFuncs.extractASetting(settingsList,"minimum_points_required_for_meld"), Boolean.FALSE).get(0);
+	//PassingConstants
+	//public final static int cardsPassBetweenDummyAndBidder=4;
+	public int cardsPassBetweenDummyAndBidder=getIntegerListFromSetting(commonFuncs.extractASetting(settingsList,"winning_team_pass"), Boolean.FALSE).get(0);
+	public static int maxCardPass = 4;
+	
+	//Removed because no intelligent ai.
+	//public int cardsPassBetweenOpponentsToBid=getIntegerListFromSetting(commonFuncs.extractASetting(settingsList,"losing_team_pass"), Boolean.FALSE).get(0);
+	public int cardsPassBetweenOpponentsToBid =0;
+	
+	//Bidding units;
+	public int player2Personality = getVirtualPersonalityConstant(commonFuncs.extractASetting(settingsList,"player_2_personality"));
+	public int player3Personality = getVirtualPersonalityConstant(commonFuncs.extractASetting(settingsList,"player_3_personality"));
+	public int player4Personality = getVirtualPersonalityConstant(commonFuncs.extractASetting(settingsList,"player_4_personality"));
+	
+	
+	//Meld constants
+	public int pointerBaseUnit = getIntegerListFromSetting(commonFuncs.extractASetting(settingsList,"base_pointer"), Boolean.FALSE).get(0);
+	public int jacksDoubleAround = 40*pointerBaseUnit;
+	public int queensDoubleAround = 60*pointerBaseUnit;
+	public int kingsDoubleAround = 80*pointerBaseUnit;
+	public int acesDoubleAround = 100*pointerBaseUnit;
+	public int jacksAround = 4*pointerBaseUnit;
+	public int queensAround = 6*pointerBaseUnit;
+	public int kingsAround = 8*pointerBaseUnit;
+	public int acesAround = 10*pointerBaseUnit;
+	public int singlePinochle = 4*pointerBaseUnit;
+	public int doublePinochle = 30*pointerBaseUnit;
+	public int runOfTrump = 15*pointerBaseUnit;
+	public int doubleRunOfTrump = 150*pointerBaseUnit;
+	public int deeceValue = 1*pointerBaseUnit;
+	public int trumpMarriage = 4*pointerBaseUnit;
+	public int offSuitMarriage = 2*pointerBaseUnit;
+	public int maxPointers = 25*pointerBaseUnit;
+	public int stopComm = 32*pointerBaseUnit;
+	
+	
+	//END CONSTANTS THAT MAY BE SETTINGS.
+	
+	
+	//Player Constants -- These remain untranslated because they are integers that will not change based on language.
+	public final static int numberOfPlayers = 4;
+	public final static int playerOne = 1;
+	public final static int playerTwo = 2;
+	public final static int playerThree = 3;
+	public final static int playerFour = 4;
+	public final static int humanPlayer = 1;
+	
+	//These designations are for the bid winners. If north/south/east/west are changed in translation then these must change as well.
+	public final static String north = readStringFromXMLFileWithoutContext(R.string.player3Designation);
+	public final static String south = readStringFromXMLFileWithoutContext(R.string.player1Designation);;
+	public final static String east = readStringFromXMLFileWithoutContext(R.string.player4Designation);;
+	public final static String west = readStringFromXMLFileWithoutContext(R.string.player2Designation);;
+	
+	
+	
+	//AI bidding mantra
+	public final static int conservative = 4;
+	public final static int moderate = 2;
+	public final static int aggressive = 0;
+	public final static String conservativeString = readStringFromXMLFileWithoutContext(R.string.conservative);
+	public final static String moderateString = readStringFromXMLFileWithoutContext(R.string.moderate);
+	public final static String aggressiveString = readStringFromXMLFileWithoutContext(R.string.aggressive);
+	
+	public final static String numericSettingName=readStringFromXMLFileWithoutContext(R.string.numeric);
+	public final static String textSettingName=readStringFromXMLFileWithoutContext(R.string.text);
+	public final static String yesNoSettingName=readStringFromXMLFileWithoutContext(R.string.yesNo);
+	//Card constants
+	//Not in strings XML because programmatic only.
+	public final static int doubleClickMillisecondThresholdBlock = 4000;
+	
+	public final static int nine = 1;
+	public final static int ten = 5;
+	public final static int jack = 2;
+	public final static int queen = 3;
+	public final static int king = 4;
+	public final static int ace = 6;
+	
+	public final static int clubsInt = 1;
+	public final static int diamondsInt = 2;
+	public final static int heartsInt = 3;
+	public final static int spadesInt = 4;
+	public final static Integer[] constantSuits = {clubsInt,diamondsInt,heartsInt,spadesInt};
+	public final static List<Integer> allSuits = Arrays.asList(constantSuits);
+	public final static Integer[] constantRanks = {nine, ten, jack, queen, king, ace};
+	public final static Integer oneDeece = 1;
+	public final static Integer twoDeeces = 2;
+	public final static Integer oneMarriage = 3;
+	public final static Integer oneJacksAround = 4;
+	public final static Integer onePinochle = 5;
+	public final static Integer oneQueensAround = 6;
+	public final static Integer twoMarriages = 7;
+	public final static Integer oneKingsAround = 8;
+	public final static Integer oneAcesAround =9;
+	public final static Integer oneRun = 10;
+	public final static Integer oneRunWithMarriage = 11;
+	public final static Integer twoPinochle = 12;
+	public final static Integer twoJacksAround = 13;
+	public final static Integer twoQueensAround = 14;
+	public final static Integer twoKingsAround = 15;
+	public final static Integer twoAcesAround = 16;
+	public final static Integer twoRuns = 17;
+	
+	public final static Integer[] receivableMeldRanks = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17};
+	public final static List<Integer> allTrumpOnlyMeldRanks = Arrays.asList(receivableMeldRanks);
+	public final static List<Integer> allRanks = Arrays.asList(constantRanks);
+	public final static int numberOfDecks = 1;
+	public final static int setsOf24 = numberOfDecks * 2;
+	
+	//Can be translated if they ever show up to the user. Right now they do not. Hence not translated.
+	public final static String winnerRoleString = "WINNER";
+	public final static String dummyRoleString = "DUMMY";
+	public final static String otherTeamRoleString = "OTHER TEAM";
+	public final static String[] validRoles = {winnerRoleString, dummyRoleString, otherTeamRoleString};
+	
+	//In translations because can appear to user.
+	public final static String clubs = readStringFromXMLFileWithoutContext(R.string.clubs);
+	public final static String diamonds = readStringFromXMLFileWithoutContext(R.string.diamonds);
+	public final static String hearts = readStringFromXMLFileWithoutContext(R.string.hearts);
+	public final static String spades = readStringFromXMLFileWithoutContext(R.string.spades);
+	
+	
+	//These may translate to other things, but we may not want to translate them...Need to talk with language experts. 
+	//Implementing translation functionality but will have to decide on country by country basis.
+	public final static String nineString = readStringFromXMLFileWithoutContext(R.string.nine);
+	public final static String tenString = readStringFromXMLFileWithoutContext(R.string.ten);
+	public final static String jackString = readStringFromXMLFileWithoutContext(R.string.jack);
+	public final static String queenString = readStringFromXMLFileWithoutContext(R.string.queen);
+	public final static String kingString = readStringFromXMLFileWithoutContext(R.string.king);
+	public final static String aceString = readStringFromXMLFileWithoutContext(R.string.ace);
+	public final static String OF = readStringFromXMLFileWithoutContext(R.string.of);
+		
+	
+	
+	
+	
+	
+	
+	
+	
+	public static String readStringFromXMLFileWithoutContext(int idToLookup) {
+	//This can have some risk to it so we have to make sure the application loads first.
+		//There is NO using this before the application loads.
+		return PinochleApplication.getAppContext().getResources().getString(idToLookup);
+	}
+
+	private int getVirtualPersonalityConstant(Setting personalitySetting) {
+	
+		String currentSettingValue = readStringFromXMLFileWithoutContext(getIdFromString(personalitySetting.getValues().get(0)));
+		if (currentSettingValue.equals(conservativeString)){
+			return conservative;
+		}
+		else if (currentSettingValue.equals(moderateString)){
+			return moderate;
+		}
+		else if (currentSettingValue.equals(aggressiveString)){
+			return aggressive;
+		}
+		else {
+			return (Integer) null;
+		}
+	}
+
+	private Boolean validateSettingsList() {
+		//Check if update occurred. If settingsList doesn't have a setting for everything in default then copy over default.
+		if (defaultSettings.size()!=settingsList.size()){
+			try {
+				commonFuncs.doRestoreDefaultsWork();
+			} catch (IOException e) {
+				return Boolean.FALSE;
+			}
+			return Boolean.TRUE;
+		}
+		else {
+			return Boolean.TRUE;
+		}
+	}
+
+	private static Boolean ifFileDNEMakeDefaults() {
+	
+		if (!commonFuncs.ifFileExists(settingsXML)){
+			
+			try {
+				commonFuncs.doRestoreDefaultsWork();
+			} catch (IOException e) {
+				return Boolean.FALSE;
+			}
+			return Boolean.TRUE;
+		}
+		else {
+			return Boolean.TRUE;
+		}
+	}
+
+	private static List<String> getIntegersInUserLanguage() {
+		
+		List<String> itemsToTranslate = Arrays.asList(validTranslationsNumbers);
+		List<String> translatedStrings = new ArrayList<String>();
+		for (String itemToTranslate: itemsToTranslate){
+			translatedStrings.add(readStringFromXMLFileWithoutContext(getIdFromString(itemToTranslate)));
+		}
+		return translatedStrings;
+	}
+	
+	private static int getNumericIntegerFromTranslation(String translation){
+		int locationOfTranslation = stringTranslations.indexOf(translation);
+		return arrayListOfIntegersForTranslations.get(locationOfTranslation);
+	}
+
+	public static int getIdFromString(String string){
+		return PinochleApplication.getAppContext().getResources().getIdentifier(string, "string", PinochleApplication.getAppContext().getPackageName());
+	}
+	
+
+	private static List<Setting> getDefaults() {
+	
+		List<Setting> returnSettings = new ArrayList<Setting>();
+		try {
+			returnSettings = commonFuncs.readAllSettings(defaultXML);
+			
+			
+			} 
+		catch (Exception e) {}
+		
+		return returnSettings;
+		
+	}
+
+
+
+	private static List<Integer> getIntegerListFromSetting(Setting setting, Boolean isDefault){
+	
+		List<Integer> integerList = new ArrayList<Integer>();
+		for (String settingValue: setting.getValues()){
+			
+			if(stringTranslations.contains(settingValue)){
+				integerList.add(arrayListOfIntegersForTranslations.get(getNumericIntegerFromTranslation(settingValue)));
+			}
+			else {
+				integerList.add(Integer.parseInt(settingValue));
+			}
+		}
+		
+		if ((integerList.size() != setting.getValues().size()) && (!isDefault)){
+			return getIntegerListFromSetting(commonFuncs.extractASetting(defaultSettings, setting.getName()), Boolean.TRUE );
+		}
+		return integerList;
+	}
+	private static List<Boolean> getBooleanListFromSetting(Setting setting, Boolean isDefault){
+		
+		List<Boolean> booleanList = new ArrayList<Boolean>();
+		for (String settingValue: setting.getValues()){
+			
+			settingValue = readStringFromXMLFileWithoutContext(getIdFromString(settingValue));
+			if (settingValue.equals(yes) || settingValue.equals(readStringFromXMLFileWithoutContext(getIdFromString(setting.getPossibleValues().get(0))))){
+				booleanList.add(Boolean.TRUE);
+			}
+			else if (settingValue.equals(no) || settingValue.equals(readStringFromXMLFileWithoutContext(getIdFromString(setting.getPossibleValues().get(1)))) ){
+				booleanList.add(Boolean.FALSE);
+			}
+			
+		}
+		
+		
+		if ((booleanList.size() != setting.getValues().size()) && (!isDefault) ){
+			return getBooleanListFromSetting(commonFuncs.extractASetting(defaultSettings, setting.getName()), Boolean.TRUE );
+		}else {
+			return booleanList;
+		}
+	}
+	
+	
+	
+}

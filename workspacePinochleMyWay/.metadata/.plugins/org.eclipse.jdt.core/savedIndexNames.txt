@@ -1,0 +1,6 @@
+INDEX VERSION 1.126+C:\Users\Marilyn\workspacePinochleMyWay\.metadata\.plugins\org.eclipse.jdt.core
+895114832.index
+1893866281.index
+3312151297.index
+2335973346.index
+3123562222.index

@@ -1,0 +1,700 @@
+package com.pi_r_squared.Pinochle;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import com.pi_r_squared.Pinochle.dto.Setting;
+import com.pi_r_squared.Pinochle.properties.CommonFunctions;
+import com.pi_r_squared.Pinochle.properties.UsefulConstants;
+import com.pi_r_squared.Pinochle.R;
+
+import android.os.Build;
+import android.os.Bundle;
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.support.v4.app.NavUtils;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.GridLayout;
+import android.widget.LinearLayout;
+import android.widget.Toast;
+import android.widget.LinearLayout.LayoutParams;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.ScrollView;
+import android.widget.TextView;
+
+
+
+
+
+
+public class Settings extends Activity {
+	
+	private final TextWatcher  mZeroPermissibleTextWatcher = new TextWatcher() {
+        
+        public void beforeTextChanged(CharSequence s, int start, int count, int after)
+        {
+                 
+        }
+
+        public void onTextChanged(CharSequence s, int start, int before, int count)
+        {
+           
+        }
+
+        public void afterTextChanged(Editable s)
+        {
+                    Log.d("DECK", "textChanged");
+                    try{
+                    if (Integer.parseInt(s.toString()) < 0){
+                    	showBadValueZeroPermissibleDialog();
+                    }
+                    }
+                    catch (Exception e){//catches in case string blank or bad value entered.
+                    	showBadValueZeroPermissibleDialog();
+                    }
+        }
+};
+	
+	
+	private final TextWatcher  mTextEditorWatcher = new TextWatcher() {
+        
+        public void beforeTextChanged(CharSequence s, int start, int count, int after)
+        {
+                 
+        }
+
+        public void onTextChanged(CharSequence s, int start, int before, int count)
+        {
+           
+        }
+
+        public void afterTextChanged(Editable s)
+        {
+                    Log.d("DECK", "textChanged");
+                    try{
+                    if (Integer.parseInt(s.toString()) < 1){
+                    	showBadValueDialog();
+                    }
+                    }
+                    catch (Exception e){//catches in case string blank or bad value entered.
+                    	showBadValueDialog();
+                    }
+        }
+};
+	
+	
+	
+	
+	
+	CommonFunctions commonFuncs = new CommonFunctions();
+	private static final AtomicInteger sNextGeneratedId = new AtomicInteger(1);
+	UsefulConstants constants = new UsefulConstants(); //cheap way to pick up new settings if upgrade/reinstall.
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		
+		
+		setContentView(R.layout.activity_settings);
+		
+		displaySettings();
+	}
+
+	private void displaySettings() {
+		
+		
+		
+		GridLayout settingHeader = (GridLayout) findViewById(R.id.settingsHeader);
+		View latestView = settingHeader; //required to trick the inflater.
+		
+	
+		List<Setting> settingList = commonFuncs.readAllPrimarySettings();
+		ScrollView settingScrollView = (ScrollView) findViewById(R.id.settingScrollView);
+		View textSetting;
+		View yesNoSetting;
+		
+		FrameLayout framedMaster = new FrameLayout(this);
+		GridLayout newLayout = new GridLayout(this);
+		newLayout.setColumnCount(1);
+		
+		for (Setting setting: settingList){
+			if (setting.getType().equals(UsefulConstants.numericSettingName) || setting.getType().equals(UsefulConstants.textSettingName)){
+				textSetting = getLayoutInflater().inflate(R.layout.text_setting, (ViewGroup) latestView);
+				TextView settingNameTextView = (TextView) textSetting.findViewById(R.id.setting_name_textfield);
+				settingNameTextView.setText(getTranslatedSettingName(setting.getName()));
+				setToUnusedId(settingNameTextView);
+				
+				//repeat for description
+				TextView settingNameDescView = (TextView) textSetting.findViewById(R.id.setting_name_descfield);
+				settingNameDescView.setText(getTranslatedSettingName(setting.getDescription()));
+				setToUnusedId(settingNameDescView);
+				
+				EditText settingValueEditView = (EditText) textSetting.findViewById(R.id.setting_value_textfield);
+				settingValueEditView.setText(setting.getValues().get(0));
+				if (getTranslatedSettingName(setting.getName()).equals(readFromStringXML(R.string.minimum_points_required_for_meld))){
+					settingValueEditView.addTextChangedListener(mZeroPermissibleTextWatcher);
+				}
+				else {
+				settingValueEditView.addTextChangedListener(mTextEditorWatcher);
+				}
+				setToUnusedId(settingValueEditView);
+				if (setting.getType().equals(UsefulConstants.numericSettingName)){
+					settingValueEditView.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+				}
+				
+				View parent = (View) ((View) ((View) settingNameTextView.getParent()).getParent()).getParent();
+				View viewToMove = parent;
+				GridLayout newParent = newLayout;
+				moveViewToAnother(viewToMove,newParent);
+				//latestView = textSetting;
+				
+				latestView = settingHeader;
+			
+			}
+			//Then it is a yes no boolean setting.
+			else if(setting.getType().equals(UsefulConstants.yesNoSettingName)) {
+				yesNoSetting = getLayoutInflater().inflate(R.layout.yes_no_setting, (ViewGroup) latestView);
+				TextView settingNameTextView = (TextView) yesNoSetting.findViewById(R.id.setting_name_textfield);
+				settingNameTextView.setText(getTranslatedSettingName(setting.getName()));
+				setToUnusedId(settingNameTextView);
+				
+				//repeat for description
+				TextView settingNameDescView = (TextView) yesNoSetting.findViewById(R.id.setting_name_descfield);
+				settingNameDescView.setText(getTranslatedSettingName(setting.getDescription()));
+				setToUnusedId(settingNameDescView);
+				
+				RadioButton newRadioButton = new RadioButton(this);
+				RadioGroup radioGroup = (RadioGroup) yesNoSetting.findViewById(R.id.yes_no_radio_button_group);
+				
+				//This if statement is to check for programmer error. A yes no setting must have at least two values.
+				if (setting.getPossibleValues().size() >= 2){
+					for (int i=0; i < setting.getPossibleValues().size(); i++){
+						if (i==0){
+							newRadioButton = (RadioButton) yesNoSetting.findViewById(R.id.yes_button);
+						}
+						else if (i==1){
+							newRadioButton = (RadioButton) yesNoSetting.findViewById(R.id.no_button);
+						}
+						else {
+							newRadioButton = new RadioButton(this);
+							radioGroup.addView(newRadioButton);
+						}
+						newRadioButton.setText(getTranslatedSettingName(setting.getPossibleValues().get(i)));
+						newRadioButton.setTextColor(Color.WHITE);
+						setToUnusedId(newRadioButton);
+						if (getTranslatedSettingName(setting.getPossibleValues().get(i)).equals(getTranslatedSettingName(setting.getValues().get(0)))){
+							radioGroup.check(newRadioButton.getId());
+						}
+						
+						
+					}
+					
+				}
+				
+				
+				
+				
+				setToUnusedId(radioGroup);
+				View parent = (View) ((View) ((View) settingNameTextView.getParent()).getParent()).getParent();
+				View viewToMove = parent;
+				GridLayout newParent = (GridLayout) newLayout;
+				moveViewToAnother(viewToMove,newParent);
+				//latestView = textSetting;
+				
+				latestView = settingHeader;
+			}
+			
+		}
+		//settingHeader.addView(newLayout);
+		framedMaster.addView(newLayout);
+		
+		LinearLayout hackyView = new LinearLayout(this);
+		final float scale = getResources().getDisplayMetrics().density;
+		int pixels = (int) (settingList.size() * 100 * scale + 0.5f);
+		hackyView.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,pixels));
+		framedMaster.addView(hackyView);
+		//framedMaster.setLayoutParams(listParams);
+		settingScrollView.addView(framedMaster);
+		//settingScrollView.addView(newLayout);
+		
+		
+		
+		
+		
+		
+	}
+	
+	private void moveViewToAnother(View viewToMove, GridLayout newParent) {
+		ViewGroup parent = (ViewGroup) viewToMove.getParent();
+
+		if (parent != null) {
+		    // detach the child from parent or you get an exception if you try
+		    // to add it to another one
+		    parent.removeView(viewToMove);
+		}
+
+		
+
+		newParent.addView(viewToMove);
+		
+	}
+
+	public void saveChanges(View v){
+		Toast.makeText(this, readFromStringXML(R.string.save_changes_message_to_user), Toast.LENGTH_LONG).show();
+		doSaveChangesWork();
+		startNewGamePrompt();
+	}
+	
+	private void doSaveChangesWork() {
+		List<Setting> newSettings = extractNewValues();
+		try {
+			saveNewSettings(newSettings);
+		}
+		catch (Exception e){
+			Log.d("DECK","Prompt user with error message.");
+			return;
+		}
+		
+		Log.d("DECK", "Save successful");
+		
+	}
+
+	private void saveNewSettings(List<Setting> newSettings) throws ParserConfigurationException, IOException, TransformerException {
+		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+ 
+		
+		Document doc = docBuilder.newDocument();
+		Element settingsList = doc.createElement("settingsList");
+		doc.appendChild(settingsList);
+		
+		for (Setting setting: newSettings){
+			Element newSettingElement = doc.createElement("setting");
+			settingsList.appendChild(newSettingElement);
+			
+			Element settingNameElement = doc.createElement("name");
+			settingNameElement.appendChild(doc.createTextNode(setting.getName()));
+			newSettingElement.appendChild(settingNameElement);
+			
+			Element settingDescriptionElement = doc.createElement("description");
+			settingDescriptionElement.appendChild(doc.createTextNode(setting.getDescription()));
+			newSettingElement.appendChild(settingDescriptionElement);
+			
+			Element valuesListRoot = doc.createElement("valuesList");
+			newSettingElement.appendChild(valuesListRoot);
+			for (String trueValue : setting.getValues()){
+				Element valueElement = doc.createElement("value");
+				valueElement.appendChild(doc.createTextNode(trueValue.toString()));
+				valuesListRoot.appendChild(valueElement);
+			}
+			
+			Element settingTypeElement = doc.createElement("type");
+			settingTypeElement.appendChild(doc.createTextNode(setting.getType()));
+			newSettingElement.appendChild(settingTypeElement);
+			
+			if (setting.getPossibleValues() != null){
+				if (setting.getPossibleValues().size() > 0){
+					Element possibleValuesListRoot = doc.createElement("possibleValues");
+					newSettingElement.appendChild(possibleValuesListRoot);
+					for (String possibleValue : setting.getPossibleValues()){
+						Element possibleValueElement = doc.createElement("value");
+						possibleValueElement.appendChild(doc.createTextNode(possibleValue.toString()));
+						possibleValuesListRoot.appendChild(possibleValueElement);
+					}
+				}
+			}
+			
+			
+		}
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		Transformer transformer = transformerFactory.newTransformer();
+		DOMSource source = new DOMSource(doc);
+		StreamResult result = new StreamResult(commonFuncs.getExternalFile(UsefulConstants.settingsXML));
+		transformer.transform(source,result);
+		
+
+
+		StringWriter writer = new StringWriter();
+		transformer.transform(source, new StreamResult(writer));
+		Log.d("DECK",writer.toString());
+
+
+ 
+		
+	}
+
+	private List<Setting> extractNewValues() {
+		
+		List<Setting> newSettings = new ArrayList<Setting>();
+		
+		GridLayout settingHeader = (GridLayout) findViewById(R.id.settingsHeader);
+		List<View> textViews = getViewsByClass(settingHeader,TextView.class);
+		List<View> editTexts = getViewsByClass(settingHeader,EditText.class);
+		List<View> radioGroups = getViewsByClass(settingHeader,RadioGroup.class);
+		List<Setting> currentSettings = commonFuncs.readAllPrimarySettings();
+		
+		Log.d("DECK", ""+ textViews.size());
+		
+		for (View v : textViews){
+			TextView textViewWithSettingName = (TextView) v;
+			String settingName = reversePull((textViewWithSettingName.getText()).toString());
+			
+			if (settingName.length() > 0){
+			//Now that we have the setting name we can pull that Setting as it currently stands.
+				Setting thisSettingCurrently = null;
+				try{
+				thisSettingCurrently = commonFuncs.extractASetting(currentSettings, settingName);
+				}
+				catch (Exception e){
+					//Don't care if exception thrown. It means no setting was found for that value.
+				}
+				
+				if (thisSettingCurrently != null){
+					if (thisSettingCurrently.getType().equals("numeric")){
+						Log.d("DECK", "Numeric");
+						for (View v2 : editTexts){
+							EditText editText = (EditText) v2;
+							if (editText.getParent() == textViewWithSettingName.getParent()){
+								try {
+									Integer.parseInt(editText.getText().toString());
+								}
+								catch (Exception e){
+									//User some how hacked the app and made a string appear keep prior setting.
+									newSettings.add(thisSettingCurrently);
+								}
+								Log.d("DECK", "New Value " + editText.getText().toString());
+								List<String> actualValue = new ArrayList<String>();
+								actualValue.add(editText.getText().toString());
+								try{
+									
+									if (Integer.parseInt(editText.getText().toString()) >0){
+										newSettings.add(new Setting(thisSettingCurrently.getName(), thisSettingCurrently.getDescription(), actualValue, thisSettingCurrently.getType(), thisSettingCurrently.getPossibleValues()));
+									}
+									else if (getTranslatedSettingName(thisSettingCurrently.getName()).equals(readFromStringXML(R.string.minimum_points_required_for_meld))){
+										if (Integer.parseInt(editText.getText().toString()) >-1){
+											newSettings.add(new Setting(thisSettingCurrently.getName(), thisSettingCurrently.getDescription(), actualValue, thisSettingCurrently.getType(), thisSettingCurrently.getPossibleValues()));
+										}
+										else {
+											newSettings.add(thisSettingCurrently);
+										}
+									}
+									else {
+										newSettings.add(thisSettingCurrently);
+									}
+								}
+								catch (Exception e){
+									newSettings.add(thisSettingCurrently);
+								}
+								break;
+							}
+						}
+						
+					}
+					else if (thisSettingCurrently.getType().equals("yesNo")){
+						Log.d("DECK", "YesNo");
+						for (View v3 : radioGroups){
+							RadioGroup radioGroup = (RadioGroup) v3;
+							if (radioGroup.getParent() == textViewWithSettingName.getParent()){
+								if (radioGroup.getCheckedRadioButtonId() !=-1){
+									RadioButton radioButton = (RadioButton) findViewById(radioGroup.getCheckedRadioButtonId());
+									String newValue = reversePull(radioButton.getText().toString());
+									Log.d("DECK", "New Value " + newValue);
+									List<String> actualValue = new ArrayList<String>();
+									actualValue.add(newValue);
+									newSettings.add(new Setting(thisSettingCurrently.getName(), thisSettingCurrently.getDescription(), actualValue, thisSettingCurrently.getType(), thisSettingCurrently.getPossibleValues()));
+									break;
+								}
+								else {
+									Log.d("DECK", "Keep prior value as no radio selected");
+									newSettings.add(thisSettingCurrently);
+								}
+								
+								
+								
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		
+		//After the view for loop now we can save the values since they are extracted.
+		return newSettings;
+		
+	}
+	/**/
+	
+	
+	private String reversePull(String translatedString){
+		String returnString = null;
+		Field fields[] = R.string.class.getFields();
+	    for (Field field : fields) {
+	        //Log.d("appname", field.getName() + ":" + getResources().getIdentifier(field.getName(), "string", this.getPackageName()));
+	    	//Log.d("appname", field.getName() + ":" + getTranslatedSettingName(field.getName()));
+	        if (translatedString.equals(getTranslatedSettingName(field.getName()))){
+	        	returnString = field.getName();
+	        	break;
+	        }
+	    }
+		return returnString;
+	}
+	
+	
+	//Modified from http://stackoverflow.com/questions/5062264/find-all-views-with-tag
+	private static ArrayList<View> getViewsByClass(ViewGroup root, Object classToTest){
+	    ArrayList<View> views = new ArrayList<View>();
+	    final int childCount = root.getChildCount();
+	    for (int i = 0; i < childCount; i++) {
+	        final View child = root.getChildAt(i);
+	        if (child instanceof ViewGroup) {
+	            views.addAll(getViewsByClass((ViewGroup) child, classToTest));
+	        }
+
+	        final Object tagObj = child.getClass();
+	        if (tagObj != null && tagObj.equals(classToTest)) {
+	            views.add(child);
+	        }
+
+	    }
+	    return views;
+	}
+	
+	
+
+	public void restoreDefaults(View v) throws IOException{
+		Toast.makeText(this, readFromStringXML(R.string.restore_defaults_message_to_user), Toast.LENGTH_LONG).show();
+		commonFuncs.doRestoreDefaultsWork();
+		startNewGamePrompt();
+	}
+	
+	
+	
+	
+	
+	
+	
+	protected void startNewGamePrompt(){
+		AlertDialog.Builder alertDialogBuilder = getNewDialogBuilder();
+		//alertDialogBuilder.setTitle("New Game?");
+		alertDialogBuilder.setTitle(readFromStringXML(R.string.new_game_question_header));
+		alertDialogBuilder
+		//.setMessage("Do you wish to play another game of Pinochle?")
+		.setMessage(readFromStringXML(R.string.new_game_from_settings_text))
+		.setIcon(R.drawable.img_card_back_96)
+		//.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+		.setPositiveButton(readFromStringXML(R.string.yes),new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog,int id) {
+				createNewGame();
+			}
+		  })
+		  .setNegativeButton(readFromStringXML(R.string.no), new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					//This is negative button.
+					dialog.cancel();
+				}
+			  })
+		  
+		  ;
+		
+		//http://stackoverflow.com/questions/14439538/how-can-i-change-the-color-of-alertdialog-title-and-the-color-of-the-line-under
+				//Borrowed solution from mmrmartin 
+			Dialog alert = alertDialogBuilder.show();
+			int dividerId = alert.getContext().getResources().getIdentifier("android:id/titleDivider", null, null);
+			View divider = alert.findViewById(dividerId);
+			divider.setBackgroundColor(Color.RED);
+	}
+	
+	
+	protected void finishSettingsActivity() {
+		
+		this.finish();
+	}
+
+	protected void showBadValueZeroPermissibleDialog(){
+		AlertDialog.Builder alertDialogBuilder = getNewDialogBuilder();
+		//alertDialogBuilder.setTitle("New Game?");
+		alertDialogBuilder.setTitle(readFromStringXML(R.string.bad_setting_title));
+		alertDialogBuilder
+		//.setMessage("Do you wish to play another game of Pinochle?")
+		.setMessage(readFromStringXML(R.string.bad_setting_zero_permissible_description))
+		.setIcon(R.drawable.img_card_back_96)
+		//.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+		.setPositiveButton(readFromStringXML(R.string.ok),new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog,int id) {
+				dialog.cancel();
+			}
+		  })
+		 
+		  
+		  ;
+		
+		//http://stackoverflow.com/questions/14439538/how-can-i-change-the-color-of-alertdialog-title-and-the-color-of-the-line-under
+				//Borrowed solution from mmrmartin 
+			Dialog alert = alertDialogBuilder.show();
+			int dividerId = alert.getContext().getResources().getIdentifier("android:id/titleDivider", null, null);
+			View divider = alert.findViewById(dividerId);
+			divider.setBackgroundColor(Color.RED);
+	}
+	
+	protected void showBadValueDialog(){
+		AlertDialog.Builder alertDialogBuilder = getNewDialogBuilder();
+		//alertDialogBuilder.setTitle("New Game?");
+		alertDialogBuilder.setTitle(readFromStringXML(R.string.bad_setting_title));
+		alertDialogBuilder
+		//.setMessage("Do you wish to play another game of Pinochle?")
+		.setMessage(readFromStringXML(R.string.bad_setting_description))
+		.setIcon(R.drawable.img_card_back_96)
+		//.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+		.setPositiveButton(readFromStringXML(R.string.ok),new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog,int id) {
+				dialog.cancel();
+			}
+		  })
+		 
+		  
+		  ;
+		
+		//http://stackoverflow.com/questions/14439538/how-can-i-change-the-color-of-alertdialog-title-and-the-color-of-the-line-under
+				//Borrowed solution from mmrmartin 
+			Dialog alert = alertDialogBuilder.show();
+			int dividerId = alert.getContext().getResources().getIdentifier("android:id/titleDivider", null, null);
+			View divider = alert.findViewById(dividerId);
+			divider.setBackgroundColor(Color.RED);
+	}
+
+
+	protected Builder getNewDialogBuilder() {
+		
+		return new AlertDialog.Builder(this);
+	}
+
+	public void ignoreChanges(View v){
+		Toast.makeText(this, readFromStringXML(R.string.disregard_message_to_user), Toast.LENGTH_LONG).show();
+		startNewGamePrompt();
+	}
+
+	@SuppressLint("NewApi")
+	private void setToUnusedId(View v) {
+		
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
+
+	        v.setId(generateViewId());
+
+	    } else {
+
+	        v.setId(View.generateViewId());
+
+	    }
+	}
+
+	//Borrowed from : http://stackoverflow.com/questions/1714297/android-view-setidint-id-programmatically-how-to-avoid-id-conflicts
+	private int generateViewId() {
+		for (;;) {
+	        final int result = sNextGeneratedId.get();
+	        // aapt-generated IDs have the high byte nonzero; clamp to the range under that.
+	        int newValue = result + 1;
+	        if (newValue > 0x00FFFFFF) newValue = 1; // Roll over to 1, not 0.
+	        if (sNextGeneratedId.compareAndSet(result, newValue)) {
+	            return result;
+	        }
+	    }
+	}
+
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.settings, menu);
+		return true;
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			// This ID represents the Home or Up button. In the case of this
+			// activity, the Up button is shown. Use NavUtils to allow users
+			// to navigate up one level in the application structure. For
+			// more details, see the Navigation pattern on Android Design:
+			//
+			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
+			//
+			NavUtils.navigateUpFromSameTask(this);
+			return true;
+	
+        case R.id.action_new_game:
+            createNewGame();
+            return true;
+        case R.id.action_rules:
+            showRules();
+            return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+	
+	   public void createNewGame(){
+	   	
+	  	 // Load new game
+	  	Intent intent = new Intent(this, PinochleGame.class);
+	  	startActivity(intent);
+	  	
+	   }
+	   
+	public void showRules(){
+		   	
+	  	 // ShowRules
+	  	Intent intent = new Intent(this, RulesActivity.class);
+	  	startActivity(intent);
+		  	
+	}
+	
+	public String getTranslatedSettingName(String settingName){
+		//return getResources().getString(getResources().getIdentifier(settingName, "string", getPackageName()));
+		return getResources().getString(getResources().getIdentifier(settingName, "string", getPackageName()));
+	}
+	
+	
+	
+	
+	public String readFromStringXML(int id){
+ 		return  getResources().getString(id);
+ 	}
+
+	public void underlineText(TextView textView){
+		textView.setPaintFlags(textView.getPaintFlags()|Paint.UNDERLINE_TEXT_FLAG);
+	}
+}
+

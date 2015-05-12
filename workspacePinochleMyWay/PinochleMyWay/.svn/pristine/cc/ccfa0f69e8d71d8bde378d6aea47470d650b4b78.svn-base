@@ -1,0 +1,564 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parent_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".PinochleGame" >
+
+    
+    
+    	
+    	
+		<TextView 
+		    android:id="@+id/logo"
+		    android:layout_height="wrap_content"
+		    android:layout_width="wrap_content"
+		    android:text="@string/dummy"
+		    android:layout_centerHorizontal="true"
+		    android:layout_centerVertical="true"
+		    />
+		<FrameLayout
+		    android:id="@+id/player3CardPlayed"
+		    android:layout_height="wrap_content"
+		    android:layout_width="wrap_content"
+		    android:layout_above="@id/logo"
+		    android:layout_centerHorizontal="true"
+		    android:layout_centerVertical="true"
+		    >
+		<ImageView 
+		    android:id="@+id/player3CardPlayedImage"
+		    android:layout_height="wrap_content"
+		    android:layout_width="wrap_content"
+		    android:src="@drawable/img_card_back_96"
+		    android:contentDescription="@string/card_played_player_3"
+		    
+		    />  	 	
+    	</FrameLayout>
+    	<FrameLayout
+		    android:id="@+id/player1CardPlayed"
+		    android:layout_height="wrap_content"
+		    android:layout_width="wrap_content"
+		    android:layout_below="@id/logo"
+		    android:layout_centerHorizontal="true"
+		    android:layout_centerVertical="true"
+		    >
+		<ImageView 
+		    android:id="@+id/player1CardPlayedImage"
+		    android:layout_height="wrap_content"
+		    android:layout_width="wrap_content"
+		    android:src="@drawable/img_card_back_96"
+		    android:contentDescription="@string/card_played_player_1"
+		    />  	
+    	</FrameLayout>
+    	<FrameLayout
+		    android:id="@+id/player4CardPlayed"
+		    android:layout_height="wrap_content"
+		    android:layout_width="wrap_content"
+		    android:layout_toRightOf="@id/logo"
+		    android:layout_centerHorizontal="true"
+		    android:layout_centerVertical="true"
+		    >
+		<ImageView 
+		    android:id="@+id/player4CardPlayedImage"
+		    android:layout_height="wrap_content"
+		    android:layout_width="wrap_content"
+		    android:src="@drawable/img_card_back_96"
+		    android:contentDescription="@string/card_played_player_4"
+		    />  		
+    	</FrameLayout>
+    	<FrameLayout
+		    android:id="@+id/player2CardPlayed"
+		    android:layout_height="wrap_content"
+		    android:layout_width="wrap_content"
+		    android:layout_toLeftOf="@id/logo"
+		    android:layout_centerHorizontal="true"
+		    android:layout_centerVertical="true"
+		    >
+		<ImageView 
+		    android:id="@+id/player2CardPlayedImage"
+		    android:layout_height="wrap_content"
+		    android:layout_width="wrap_content"
+		    android:src="@drawable/img_card_back_96"
+		    android:contentDescription="@string/card_played_player_2"
+		    />  		
+    	</FrameLayout>
+    	
+    
+    
+   		 
+   		    
+   		     <GridLayout 
+   		         android:id="@+id/hand_header"
+   		         android:columnCount="3"
+   		         android:layout_width="wrap_content"
+        		 android:layout_height="wrap_content"
+   		         
+   		         android:layout_alignParentTop="true"
+   		         >
+   		        
+   		         
+   		         
+   		         <TextView
+   		             android:layout_width="wrap_content"
+        			 android:layout_height="wrap_content"
+   		             android:text="" 
+   		             ></TextView>
+   		          <TextView
+   		             android:layout_width="wrap_content"
+        			 android:layout_height="wrap_content"
+        			 android:layout_gravity="center"
+   		             android:text="@string/north_south" 
+   		             android:paddingRight="10dp"
+   		             android:paddingLeft="10dp"
+   		             ></TextView>
+   		          <TextView
+   		             android:layout_width="wrap_content"
+        			 android:layout_height="wrap_content"
+        			 android:layout_gravity="center"
+   		             android:text="@string/east_west" 
+   		             ></TextView>
+   		         <TextView
+   		             android:layout_width="wrap_content"
+        			 android:layout_height="wrap_content"
+   		             android:text="@string/recorded_meld" 
+   		             ></TextView>
+   		         <TextView
+   		             android:id="@+id/north_south_meld"
+   		             android:layout_width="wrap_content"
+        			 android:layout_height="wrap_content"
+   		             android:gravity="center"
+   		             android:layout_gravity="center"
+   		             
+   		             ></TextView>
+   		         <TextView
+   		             android:id="@+id/east_west_meld"
+   		             android:layout_width="wrap_content"
+        			 android:layout_height="wrap_content"
+        			 android:layout_gravity="center"
+   		             ></TextView>
+   		         <TextView
+   		             android:layout_width="wrap_content"
+        			 android:layout_height="wrap_content"
+   		             android:text="@string/current_pointers" 
+   		             ></TextView>
+   		         <TextView
+   		             android:id="@+id/north_south_pointers"
+   		             android:layout_width="wrap_content"
+        			 android:layout_height="wrap_content"
+   		             android:text="" 
+   		             android:gravity="center"
+   		             android:layout_gravity="center"
+   		             ></TextView>
+   		         <TextView
+   		             android:id="@+id/east_west_pointers"
+   		             android:layout_width="wrap_content"
+        			 android:layout_height="wrap_content"
+        			 android:layout_gravity="center"
+   		             android:text="" 
+   		             ></TextView>
+   		         
+   		         
+   		     </GridLayout>
+   		     
+   		     <GridLayout 
+   		         android:id="@+id/game_header"
+   		         android:columnCount="3"
+   		         android:layout_width="wrap_content"
+        		 android:layout_height="wrap_content"
+   		        
+   		         android:layout_alignParentTop="true"
+   		         android:layout_alignParentRight="true"
+   		         >
+   		        
+   		         
+   		         
+   		         <TextView
+   		             android:layout_width="wrap_content"
+        			 android:layout_height="wrap_content"
+   		             android:text="" 
+   		             ></TextView>
+   		          <TextView
+   		             android:layout_width="wrap_content"
+        			 android:layout_height="wrap_content"
+        			 android:layout_gravity="center"
+   		             android:text="@string/north_south"  
+   		             android:paddingRight="10dp"
+   		             android:paddingLeft="10dp"
+   		             ></TextView>
+   		          <TextView
+   		             android:layout_width="wrap_content"
+        			 android:layout_height="wrap_content"
+        			 android:layout_gravity="center"
+   		             android:text="@string/east_west"  
+   		             ></TextView>
+   		         <TextView
+   		             android:layout_width="wrap_content"
+        			 android:layout_height="wrap_content"
+   		             android:text="@string/recorded_score" 
+   		             ></TextView>
+   		         <TextView
+   		             android:id="@+id/north_south_score"
+   		             android:layout_width="wrap_content"
+        			 android:layout_height="wrap_content"
+   		             android:text="" 
+   		             android:gravity="center"
+   		             android:layout_gravity="center"
+   		             ></TextView>
+   		         <TextView
+   		             android:id="@+id/east_west_score"
+   		             android:layout_width="wrap_content"
+        			 android:layout_height="wrap_content"
+        			 android:layout_gravity="center"
+   		             android:text="" 
+   		             ></TextView>
+   		         
+   		         <TextView
+   		             android:layout_width="wrap_content"
+        			 android:layout_height="wrap_content"
+   		             android:text="@string/recorded_bid" 
+   		             ></TextView>
+   		         <TextView
+   		             android:id="@+id/final_bid"
+   		             android:layout_width="wrap_content"
+        			 android:layout_height="wrap_content"
+        			 android:layout_gravity="center"
+   		             android:text="" 
+   		             ></TextView>
+   		          <TextView
+   		             android:id="@+id/final_trump"
+   		             android:layout_width="wrap_content"
+        			 android:layout_height="wrap_content"
+        			 android:layout_gravity="center"
+   		             android:text="" 
+   		             ></TextView>
+   		         
+   		     </GridLayout>
+   		
+   		 
+   		 
+   		 
+   		     
+   		     
+         
+         <FrameLayout
+            android:id="@+id/player3_grid"
+            android:layout_width="fill_parent"
+    		android:layout_height="wrap_content"
+    		android:rowCount="1"
+    		android:layout_centerHorizontal="true"
+    		android:layout_below="@id/hand_header"
+    		
+          ></FrameLayout>
+         
+         <FrameLayout
+   		     android:id="@+id/player3_popup_frame"
+            android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:rowCount="1"
+    		android:layout_centerHorizontal="true"
+    		android:layout_below="@id/player3_grid"
+   		     
+   		     
+   		     >
+   		     
+             <FrameLayout
+            android:id="@+id/player3_meld_grid"
+            android:layout_width="fill_parent"
+    		android:layout_height="wrap_content"
+    		android:rowCount="1"
+    		
+    		
+          ></FrameLayout>
+             
+   		        <include 
+   		             android:id="@+id/player3_popup"
+         			android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         layout="@layout/bid_popup"></include>
+   		         
+   		       
+   		     
+   		 </FrameLayout>
+         
+         
+         
+         <FrameLayout
+            android:id="@+id/player4_grid"
+            android:layout_width="wrap_content"
+    		android:layout_height="fill_parent"
+    		android:columnCount="1"
+    		android:layout_centerVertical="true"
+    		android:layout_alignParentRight="true"
+    		
+          >
+          
+              
+         </FrameLayout>
+         
+         <FrameLayout
+   		     android:id="@+id/player4_popup_frame"
+            android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:rowCount="1"
+    		android:layout_centerVertical="true"
+    		android:layout_toLeftOf="@id/player4_grid"
+   		    
+   		     
+   		     >
+   		        <FrameLayout
+            android:id="@+id/player4_meld_grid"
+            android:layout_width="fill_parent"
+    		android:layout_height="wrap_content"
+    		android:rowCount="1"
+    		
+    		
+          ></FrameLayout>
+   		     
+   		        <include 
+   		             android:id="@+id/player4_popup"
+         			android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         layout="@layout/bid_popup"></include>
+   		         
+   		       
+   		     
+   		 </FrameLayout>
+         
+         
+         <FrameLayout
+            android:id="@+id/player2_grid"
+            android:layout_width="wrap_content"
+    		android:layout_height="fill_parent"
+    		android:columnCount="1"
+    		android:layout_centerVertical="true"
+    		android:layout_alignParentLeft="true"
+    		
+          >
+          
+              
+         </FrameLayout>
+         
+         <FrameLayout
+   		     android:id="@+id/player2_popup_frame"
+            android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:rowCount="1"
+    		android:layout_centerVertical="true"
+    		android:layout_toRightOf="@id/player2_grid"
+    		
+   		     
+   		     
+   		     >
+   		     
+             <FrameLayout
+            android:id="@+id/player2_meld_grid"
+            android:layout_width="fill_parent"
+    		android:layout_height="wrap_content"
+    		android:rowCount="1"
+    		
+    		
+          ></FrameLayout>
+   		        <include 
+   		             android:id="@+id/player2_popup"
+         			android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         layout="@layout/bid_popup"></include>
+   		         
+   		       
+   		     
+   		 </FrameLayout>
+         
+         
+         <!-- 
+          <GridLayout
+            android:id="@+id/player2_grid"
+            android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:columnCount="1"
+    		android:layout_centerVertical="true"
+    		android:layout_alignParentLeft="true"
+    		
+          >
+          
+              
+         </GridLayout> -->
+         
+         <GridLayout
+              android:id="@+id/hand_grid"
+              android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:gravity="bottom"
+    		android:rowCount="1"
+    		android:layout_centerHorizontal="true"
+    		android:layout_alignParentBottom="true"
+             >
+             
+         </GridLayout>
+   
+     <TextView
+        android:id="@+id/hand_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/your_hand" 
+        android:layout_above="@id/hand_grid"
+     />
+     
+     
+      <FrameLayout
+   		     android:id="@+id/player1_popup_frame"
+            android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:rowCount="1"
+    		android:layout_centerHorizontal="true"
+    		android:layout_above="@id/hand_grid"
+   		     
+   		     
+   		     >
+   		       <FrameLayout
+            android:id="@+id/player1_meld_grid"
+            android:layout_width="fill_parent"
+    		android:layout_height="wrap_content"
+    		android:rowCount="1"
+    		
+    		
+          ></FrameLayout>
+   		        <include 
+   		             android:id="@+id/player1_popup"
+         			android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         layout="@layout/bid_popup"></include>
+   		         
+   		       
+   		     
+   		 </FrameLayout>
+     
+      
+      
+      <FrameLayout 
+         android:id="@+id/playing_card_prompt"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_above="@id/hand_title"
+         android:layout_centerHorizontal="true"
+         
+         >
+   		        
+      <LinearLayout
+             android:layout_width="wrap_content"
+         	android:layout_height="wrap_content"
+         	android:orientation="vertical"
+             >
+         <TextView
+             android:id="@+id/playing_card_message"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:text="@string/need_to_play_card"
+             ></TextView></LinearLayout></FrameLayout>
+     
+     <FrameLayout 
+         android:id="@+id/passing_card_prompt"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_above="@id/hand_title"
+         android:layout_centerHorizontal="true"
+         
+         >
+         <LinearLayout
+             android:layout_width="wrap_content"
+         	android:layout_height="wrap_content"
+         	android:orientation="vertical"
+             >
+         <TextView
+             android:id="@+id/passing_card_message"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:text="@string/pass_card_partner"
+             >
+             
+         </TextView>
+         <TextView
+             android:id="@+id/passing_card_text"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:text="@string/choose_cards_partner"
+             >
+             </TextView>
+         <TextView
+             android:id="@+id/passing_card_undo"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:text="@string/undo_selection"
+             >
+             
+         </TextView>
+         <GridLayout
+              android:id="@+id/passing_card_grid"
+              android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:gravity="bottom"
+    		android:columnCount="5"
+    		android:rowCount="1"
+    		android:layout_gravity="center_horizontal"
+             >
+             <ImageView 
+		    android:id="@+id/human_pass_card_1"
+		    android:layout_height="wrap_content"
+		    android:layout_width="wrap_content"
+		    android:src="@drawable/img_card_back_96"
+		    android:contentDescription="@string/human_pass"
+		    android:tag="@drawable/img_card_back_96"
+		     android:onClick="undoSelectedCard"
+		    />  
+		     <ImageView 
+		    android:id="@+id/human_pass_card_2"
+		    android:layout_height="wrap_content"
+		    android:layout_width="wrap_content"
+		    android:src="@drawable/img_card_back_96"
+		    android:contentDescription="@string/human_pass"
+		    android:tag="@drawable/img_card_back_96"
+		    android:onClick="undoSelectedCard"
+		    />  
+		     <ImageView 
+		    android:id="@+id/human_pass_card_3"
+		    android:layout_height="wrap_content"
+		    android:layout_width="wrap_content"
+		    android:src="@drawable/img_card_back_96"
+		    android:contentDescription="@string/human_pass"
+		    android:tag="@drawable/img_card_back_96"
+		    android:onClick="undoSelectedCard"
+		    />  
+		     <ImageView 
+		    android:id="@+id/human_pass_card_4"
+		    android:layout_height="wrap_content"
+		    android:layout_width="wrap_content"
+		    android:src="@drawable/img_card_back_96"
+		    android:contentDescription="@string/human_pass"
+		    android:tag="@drawable/img_card_back_96"
+		    android:onClick="undoSelectedCard"
+		    />  	
+		    <Button 
+        	android:id="@+id/done_passing"
+        	android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:text="@string/ok"
+    		android:onClick="attemptToPassCards"
+        	>
+    </Button>
+         </GridLayout>
+         </LinearLayout>
+     </FrameLayout>
+     
+   <!--  <TextView
+        android:id="@+id/hand_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/your_hand" 
+        android:layout_above="@id/hand_grid"
+        /> -->
+  
+
+</RelativeLayout>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+
+<LinearLayout 
+    
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+   
+    >
+ 	 <Button 
+        android:id="@+id/bid_plus_one"
+        android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/bid_plus_one"
+    android:layout_gravity="center_vertical"
+    style="?android:attr/buttonBarButtonStyle"
+    android:layout_weight="1"
+        >
+    </Button>
+    
+ 	 <TextView          
+      android:layout_width="1px" 
+      android:layout_height="fill_parent" 
+      android:background="#000000" 
+      
+      />
+
+ 	 <LinearLayout
+ 	     android:layout_width="wrap_content"
+ 	     android:layout_height="wrap_content" 
+ 	     android:orientation="vertical"
+ 	     android:layout_weight="1">
+		
+ 	      <EditText
+ 	          android:id="@+id/custom_bid"
+ 	          android:layout_width="wrap_content"
+ 	          android:layout_height="wrap_content"
+ 	          android:hint="@string/bid"
+ 	          android:inputType="number|textNoSuggestions" 
+ 	          android:layout_gravity="center">
+
+</EditText>
+    <Button 
+        android:id="@+id/custom_bid_submit"
+        android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/custom_bid"
+    android:layout_gravity="center"
+    style="?android:attr/buttonBarButtonStyle"
+        >
+    </Button>
+    </LinearLayout>
+    
+    <TextView          
+      android:layout_width="1px" 
+      android:layout_height="fill_parent" 
+      android:background="#000000" />
+    <Button 
+        android:id="@+id/pass"
+        android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/pass"
+    style="?android:attr/buttonBarButtonStyle"
+     android:layout_weight="1"   
+     android:layout_gravity="center_vertical">
+     
+    </Button>
+
+    <!--  This is a dummy element to prevent the auto load of the keyboard. -->
+    <LinearLayout android:focusable="true"
+	android:focusableInTouchMode="true" 
+	android:layout_width="0px"
+	android:layout_height="0px" >
+	    <requestFocus />
+	</LinearLayout>
+    
+
+</LinearLayout>
+</merge>

@@ -1,0 +1,293 @@
+package com.pi_r_squared.Pinochle.dto;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.pi_r_squared.Pinochle.properties.UsefulConstants.*;
+
+public class PublicKnowledge {
+
+	List<PublicPlayerKnowledge> knowledgeAboutPlayers;
+	PublicDeckKnowledge knowledgeAboutDeck;
+	
+	public PublicKnowledge(){
+		
+		this.knowledgeAboutPlayers = new ArrayList<PublicPlayerKnowledge>();
+		for (int playerId=1; playerId< numberOfPlayers+1; playerId++){
+			this.knowledgeAboutPlayers.add(new PublicPlayerKnowledge());
+		}
+		
+		
+		this.knowledgeAboutDeck = new PublicDeckKnowledge();
+	}
+	
+	public List<Boolean> whoCouldPlayCard(Card card){
+		List<Integer> whoCantPlayCard = whoDoesntHaveCard(card);
+		List<Boolean> whoCouldPlayCard = new ArrayList<Boolean>();
+		for (int playerId=1;playerId<numberOfPlayers+1; playerId++){
+			if(whoCantPlayCard.contains(playerId)){
+				whoCouldPlayCard.add(Boolean.FALSE);
+			}
+			else {
+				whoCouldPlayCard.add(Boolean.TRUE);
+			}
+		}
+		return whoCouldPlayCard;
+	}
+	
+	public void addCardToPlayedListAndRefreshPossibilities(int playerId, int leaderOfTrick, List<Card> cardsFromTrick, int trump){
+		Card cardPlayerPlayed = cardsFromTrick.get(playerId -1);
+		this.getKnowledgeAboutDeck().getCardsAlreadyPlayed().add(cardPlayerPlayed);
+		this.getKnowledgeAboutPlayers().get(playerId -1).getCardsAlreadyPlayed().add(cardPlayerPlayed);
+		//Refresh PossibilitiesToComeLater
+		
+		int suitLed = cardsFromTrick.get(leaderOfTrick -1).getCardSuit();
+		List<Card> cardsPlayedPriorToYou = new ArrayList<Card>();
+		for (int playerToCheckSuit=1; playerToCheckSuit< numberOfPlayers+1; playerToCheckSuit++){
+			Card cardThatPlayerPlayed = cardsFromTrick.get(playerToCheckSuit -1);
+			if (cardThatPlayerPlayed.getCardSuit() != suitLed){
+				this.getKnowledgeAboutPlayers().get(playerToCheckSuit -1).setPossiblyHasSuit(suitLed, Boolean.FALSE);
+				if (cardThatPlayerPlayed.getCardSuit() != trump){
+					this.getKnowledgeAboutPlayers().get(playerToCheckSuit -1).setPossiblyHasSuit(trump, Boolean.FALSE);
+				}
+				else {
+					resetHighestEligible(trump,cardsPlayedPriorToYou, cardThatPlayerPlayed, playerToCheckSuit);
+				}
+				continue;
+			}
+			resetHighestEligible(suitLed,cardsPlayedPriorToYou, cardThatPlayerPlayed, playerToCheckSuit);
+			
+			
+			//must be last line of for loop.
+			cardsPlayedPriorToYou.add(cardThatPlayerPlayed);
+		}
+	}
+	
+	private List<Boolean> playersThatMightHaveHigherRankingCardOfThatSuitThatOneChosen(Card chosenCard){
+		List<Boolean> possiblePlayers = new ArrayList<Boolean>();
+		int suitOfCardToCheck = chosenCard.getCardSuit();
+		for (int playerId=1; playerId<numberOfPlayers +1; playerId++){
+			if (!this.getKnowledgeAboutPlayers().get(playerId-1).getPossiblyHasCardsOfSuit(suitOfCardToCheck)){
+				possiblePlayers.add(Boolean.FALSE);
+				continue;
+			}
+			else {
+				int highestPossible = this.getKnowledgeAboutPlayers().get(playerId-1).getHighestPossibleCardOfSuit(suitOfCardToCheck).getRankOfCard();
+				if (highestPossible > chosenCard.getRankOfCard()){
+					//List<Integer> ranksHigherThanChosenCard = new ArrayList<Integer>();
+					List<Integer> rankStillInPlayHigher = new ArrayList<Integer>();
+					for (int rank: allRanks){
+						if (rank > chosenCard.getRankOfCard()){
+							//ranksHigherThanChosenCard.add(rank);
+							int numberOfRankSuitPlayed = countNumberEqual((ArrayList<Card>)this.getKnowledgeAboutDeck().getCardsAlreadyPlayed(), new Card(rank,suitOfCardToCheck));
+							if (numberOfRankSuitPlayed < 2){
+								rankStillInPlayHigher.add(rank);
+								break;
+							}
+						}
+						
+					}
+					if (rankStillInPlayHigher.size() > 0){
+						possiblePlayers.add(Boolean.TRUE);
+						continue;
+					}
+					else {
+						possiblePlayers.add(Boolean.FALSE);
+						continue;
+					}
+				}
+				else {
+					possiblePlayers.add(Boolean.FALSE);
+					continue;
+				}
+			}
+		}
+		return possiblePlayers;
+		
+	}
+	
+	public List<Boolean> possiblePlayersWithCardsThatMightTakeTrickIfThisLed(Card chosenCard, int trump, int trumpDifference) {
+		List<Boolean> possiblePlayers = new ArrayList<Boolean>();
+		int suitOfCardToCheck = chosenCard.getCardSuit();
+		List<Boolean> playersThatMightHaveSuitHighEnough = playersThatMightHaveHigherRankingCardOfThatSuitThatOneChosen(chosenCard);
+		if (suitOfCardToCheck == trump){
+			return playersThatMightHaveSuitHighEnough;
+		}
+		for (int playerId=1; playerId<numberOfPlayers +1; playerId++){
+			if (playersThatMightHaveSuitHighEnough.get(playerId-1)){
+				possiblePlayers.add(Boolean.TRUE);
+				continue;
+			}
+			else {
+				if (hasMeldOfThatSuitNotYetPlayed(playerId, suitOfCardToCheck)){
+					possiblePlayers.add(Boolean.FALSE);
+					continue;
+				}
+				
+				if (playerMightHaveTrump(playerId, trump) && trumpDifference > 0){
+					possiblePlayers.add(Boolean.TRUE);
+					continue;
+				}
+				else {
+					possiblePlayers.add(Boolean.FALSE);
+					continue;
+				}
+			}
+		}
+		
+		return possiblePlayers;
+	}
+	
+	private Boolean hasMeldOfThatSuitNotYetPlayed(int playerInt, int suit){
+		
+		for (Card card: this.getKnowledgeAboutPlayers().get(playerInt -1).getCardsInMeld() ){
+			if (card.getCardSuit() == suit){
+				if (countOfCardInAPlayerMeldNotYetPlayed(playerInt, card) > 0){
+					return Boolean.TRUE;
+				}
+			}
+		}
+		return Boolean.FALSE;
+	}
+	
+	private Boolean playerMightHaveTrump(int playerInt, int trump){
+		return this.getKnowledgeAboutPlayers().get(playerInt -1).getPossiblyHasCardsOfSuit(trump);
+	}
+	
+	private void resetHighestEligible(int suitLed, List<Card> cardsPlayedPriorToYou, Card cardThatPlayerPlayed, int playerToCheckSuit){
+		List<Card> cardsPlayedOfSuitLedBeforePlayer = getCardsOfSuit(suitLed, cardsPlayedPriorToYou);
+		Card highestCardPlayedOfSuit = highestCardPlayedOfSuit(cardsPlayedOfSuitLedBeforePlayer);
+		if (highestCardPlayedOfSuit !=null){
+			if (highestCardPlayedOfSuit.getRankOfCard() >= cardThatPlayerPlayed.getRankOfCard()){
+				//Then the player cannot have a card of this suit higher than this card.
+				//See if this is already highest if not change it.
+				Card priorHighestEligibleForPlayer = this.getKnowledgeAboutPlayers().get(playerToCheckSuit -1).getHighestPossibleCardOfSuit(suitLed);
+				if (priorHighestEligibleForPlayer.getRankOfCard() > (highestCardPlayedOfSuit.getRankOfCard())){
+					this.getKnowledgeAboutPlayers().get(playerToCheckSuit -1).setPossiblyHighestPossibleCardOfSuit(highestCardPlayedOfSuit);
+				}
+			}
+		}
+	}
+	
+	private Card highestCardPlayedOfSuit(List<Card> cardsPlayed){
+		
+		if (cardsPlayed.size() > 0) {
+			Card highestCard = cardsPlayed.get(0);
+			for (Card cardPlayed: cardsPlayed){
+				if (cardPlayed.getRankOfCard() == ace){
+					return cardPlayed;
+				}
+				else {
+					if (cardPlayed.getRankOfCard() > highestCard.getRankOfCard()){
+						highestCard = cardPlayed;
+					}
+				}
+			}
+			return highestCard;
+		}
+		else {
+			return null;
+		}
+	}
+	
+	private List<Card> getCardsOfSuit(int suitLed, List<Card> cardsFromTrick) {
+		List<Card> cardsOfSuit = new ArrayList<Card>();
+		for (Card cardFromTrick: cardsFromTrick){
+			if (cardFromTrick.getCardSuit() == suitLed){
+				cardsOfSuit.add(cardFromTrick);
+			}
+		}
+		return cardsOfSuit;
+	}
+
+	public List<Integer> whoDoesntHaveCard(Card card){
+		List<Integer> playersWhoDontHaveCard = new ArrayList<Integer>();
+		List<Card> cardsRemainingOfThisCard = this.knowledgeAboutDeck.amountOfSpecificCardInPlay(card);
+		if (cardsRemainingOfThisCard.size() > 0){
+			for (int playerId=1; playerId < numberOfPlayers + 1; playerId++){
+				//If a player cannot have any of the suit, no way they can have that specific card.
+				if (!(this.getKnowledgeAboutPlayers().get(playerId-1).getPossiblyHasCardsOfSuit(card.getCardSuit()))){
+					playersWhoDontHaveCard.add(playerId);
+					continue;
+				}
+				else {
+					
+					//determine how many cards are taken up by meld.
+					//If all cards remaining are still in meld then player who didn't display that meld can't play it.
+					if (cardsRemainingOfThisCard.size() == countOfCardInAllMeldNotYetPlayed(card)){
+						if (countOfCardInAPlayerMeldNotYetPlayed(playerId, card) == 0){
+							playersWhoDontHaveCard.add(playerId);
+							continue;
+						}
+					}
+					//then more deduction required.
+					else {
+						Card highestPossibleCardOfSuit = this.getKnowledgeAboutPlayers().get(playerId -1).getHighestPossibleCardOfSuit(card.getCardSuit());
+						//player cannot have card because they would have won a prior trick.
+						if (highestPossibleCardOfSuit.getRankOfCard() < card.getRankOfCard()){
+							playersWhoDontHaveCard.add(playerId);
+							continue;
+						}
+					}
+					//No other deduction can be done on public knowledge. 
+					
+					
+				}
+			}
+			return playersWhoDontHaveCard;
+		}
+		else {
+			//No one can have this.
+			for (int playerId=1; playerId < numberOfPlayers + 1; playerId++){
+				playersWhoDontHaveCard.add(playerId);
+			}
+			return playersWhoDontHaveCard;
+		}
+		
+	}
+	
+	public int countOfCardInAllMeldNotYetPlayed(Card card){
+		int numberOfCardInMeld = 0;
+		for (int playerId = 1; playerId< numberOfPlayers+1; playerId++){
+			numberOfCardInMeld = numberOfCardInMeld + countOfCardInAPlayerMeldNotYetPlayed(playerId, card);
+		}
+		return numberOfCardInMeld;
+	}
+	
+	public int countOfCardInAPlayerMeldNotYetPlayed(int player, Card cardToCheck){
+		int timesPlayedCard = this.getKnowledgeAboutPlayers().get(player-1).timesPlayedGivenCard(cardToCheck);
+		int timesInMeld =this.getKnowledgeAboutPlayers().get(player-1).timesInMeld(cardToCheck);
+		
+		return timesInMeld - timesPlayedCard;
+	}
+	
+	private int countNumberEqual(ArrayList<Card> cardList, Card cardToCheck) {
+	    int count = 0;
+	    for (Card card :cardList) {
+	    	if (card!=null){
+		    	if (card.getRankOfCard() == cardToCheck.getRankOfCard() && card.getCardSuit() == cardToCheck.getCardSuit()){
+		        //if (card.equals(cardToCheck)) {
+		          count++;
+		        }
+	    	}
+	    }
+	    return count;
+	}
+	
+	public List<PublicPlayerKnowledge> getKnowledgeAboutPlayers() {
+		return knowledgeAboutPlayers;
+	}
+
+	public void setKnowledgeAboutPlayers(
+			List<PublicPlayerKnowledge> knowledgeAboutPlayers) {
+		this.knowledgeAboutPlayers = knowledgeAboutPlayers;
+	}
+
+	public PublicDeckKnowledge getKnowledgeAboutDeck() {
+		return knowledgeAboutDeck;
+	}
+
+	public void setKnowledgeAboutDeck(PublicDeckKnowledge knowledgeAboutDeck) {
+		this.knowledgeAboutDeck = knowledgeAboutDeck;
+	}
+}

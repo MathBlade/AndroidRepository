@@ -1,0 +1,82 @@
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+   
+    
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+     android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+     android:id="@+id/settingsHeader"
+     android:columnCount="1"
+    tools:context=".Settings" >
+
+    
+   
+        <LinearLayout
+         android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:orientation="horizontal"
+        >
+            
+           
+	    	<RelativeLayout 
+            android:id="@+id/settingsToScroll"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+           
+            >
+            
+	    	    <Button
+	    	    style="?android:attr/buttonStyleSmall"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		         android:text="@string/disregard_changes"
+		        android:id="@+id/ignore_changes"
+		        android:onClick="ignoreChanges"
+		         />
+	    	    <Button
+		    	style="?android:attr/buttonStyleSmall"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="@string/restore_defaults"
+		        android:layout_centerHorizontal="true"
+		         android:id="@+id/restore_defaults"
+		         android:onClick="restoreDefaults"
+		         />
+		    	<Button
+		    	style="?android:attr/buttonStyleSmall"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="@string/save_changes"
+		        android:layout_alignParentRight="true"
+		         android:id="@+id/save_changes"
+		         android:onClick="saveChanges"
+		         />
+            
+		    	
+	            
+	    	</RelativeLayout>
+	    	
+     </LinearLayout>
+     <TextView 
+         android:layout_width="wrap_content"
+		 android:layout_height="wrap_content"
+		 android:text="@string/changes_take_effect"
+		 />
+        
+        
+	<ScrollView
+	    	     android:layout_width="match_parent"
+		    	android:layout_height="wrap_content"
+		    	android:id="@+id/settingScrollView"
+		    	 
+		    	 
+	    	    >
+	    	    
+	    	        
+	    	        
+	    	   
+	    	    
+	    	</ScrollView>
+</GridLayout>
